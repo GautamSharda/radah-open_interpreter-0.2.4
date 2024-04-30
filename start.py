@@ -8,7 +8,7 @@ import base64
 import requests
 import io
 from io import BytesIO
-print('top')
+print('starting server...')
 
 def maybe_open_terminal():
     # OpenAI API Key
@@ -58,17 +58,17 @@ def maybe_open_terminal():
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-    print(response.json())
+    # print(response.json())
 
     terminal = response.json()['choices'][0]['message']['content']
 
-    print(terminal)
+    # print(terminal)
 
     if not int(terminal):
         try:
             pyautogui.click('terminal.png')
         except:
-            print("Could nt find element")
+            print("Error: Could not re-open terminal")
         time.sleep(5)
 
 app = Flask(__name__)
@@ -79,10 +79,10 @@ done = False
 @app.route('/message', methods=['POST'])
 def handle_message():
     global done
-    print('we are here')
+    # print('we are here')
     message = request.json['message']
     #message = request.json['message'] + ". Note: this computer is a windows operating system. To view the current screen use computer.display.view() (no need to import computer) and do not use image.show(). Use firefox as the browser."
-    print(message)
+    # print(message)
     if int(request.json['first']):
         maybe_open_terminal()
     pyautogui.write(message)
@@ -96,7 +96,7 @@ def handle_message():
 @app.route('/done', methods=['GET'])
 def doneFunction():
     global done
-    print('we have no hit the done endpoint')
+    # print('we have no hit the done endpoint')
     done = True
     return 'Done'
 
