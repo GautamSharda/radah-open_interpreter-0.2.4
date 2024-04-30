@@ -8,7 +8,7 @@ import base64
 import requests
 import io
 from io import BytesIO
-print('starting server...')
+print('Connecting Open Interpreter and Radah...')
 
 def maybe_open_terminal():
     # OpenAI API Key
