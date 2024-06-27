@@ -38,6 +38,7 @@ open_interpreter_process = subprocess.Popen(
     text=True,
     cwd=directory
 )
+print("[DEBUG] Started process: ", open_interpreter_process.pid)
 
 def kill_obs_processes():
     for proc in psutil.process_iter(['name']):
@@ -115,20 +116,37 @@ def doneFunction():
 
 @app.route('/stop', methods=['GET'])
 def stop():
-    if DONE:
-        return 'Agent not doing a task'
-    else:
+    #breakpoint()
+    try:
         try:
             # Send CTRL+C signal to the subprocess
-            open_interpreter_process.send_signal(signal.SIGINT)
-            return 'Agent stopped'
-        except Exception as e:
-            print(f"Error sending CTRL+C signal to subprocess: {str(e)}")
-            return 'Error stopping agent'
+            print("[DEBUG] Sending CTRL+C signal to the subprocess...")
+            open_interpreter_process.send_signal(signal.CTRL_C_EVENT)
+
+
+            # Wait for the subprocess to finish
+            print("[DEBUG] Waiting for the subprocess to finish...")
+            open_interpreter_process.wait()
+            print(f"Wait")
+        except KeyboardInterrupt:
+            print("[DEBUG] Parent process received KeyboardInterrupt. Ignoring...")
+
+        print("[DEBUG] Subprocess finished with exit code:", open_interpreter_process.returncode)
+        print("[DEBUG] Parent process continues execution.")
+
+        return 'Agent stopped'
+    except Exception as e:
+        print(f"Error sending CTRL+C signal to subprocess: {str(e)}")
+        return 'Error stopping agent'
 
 @app.route('/test', methods=['GET'])
 def test():
+    print('Live')
     return 'Live'
 
+def signal_handler(sig, frame):
+    print("[DEBUG] Parent process received SIGINT (CTRL-C). Ignoring...")
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, signal_handler)
     run_simple('0.0.0.0', 8000, app)

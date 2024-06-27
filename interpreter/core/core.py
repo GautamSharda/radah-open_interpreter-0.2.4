@@ -213,11 +213,13 @@ class OpenInterpreter:
                     },
                 )
 
+            print("[DEBUG, core.py, line 216] blocking=", blocking)
             if not blocking:
                 chat_thread = threading.Thread(
                     target=self.chat, args=(message, display, stream, True)
                 )  # True as in blocking = True
                 chat_thread.start()
+                chat_thread.daemon=True
                 return
 
             if stream:

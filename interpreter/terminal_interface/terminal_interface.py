@@ -90,6 +90,14 @@ def terminal_interface(interpreter, message):
                     pass
 
         except KeyboardInterrupt:
+            print("[DEBUG, terminal_interface.py, 93] Stopped Open Interpreter")
+            requests.get('https://agent-swarm-production.up.railway.app/workspace/test2', headers={'Content-Type': 'application/json'})
+            print("[DEBUG, core.py, line 313] Sending stop agent message to Radah /PromptRunning")
+            try:
+                response = requests.get('https://agent-swarm-production.up.railway.app/workspace/promptComplete/' + '66039df5a8738d00a5260365', headers={'Content-Type': 'application/json'})
+                print("[Debug, core.py, line 352] GET /promptComplete response:", response.status_code)
+            except Exception as e:
+                print("Error occurred:", e)            
             # Exit gracefully
             # Disconnect from the computer interface
             interpreter.computer.terminate()
@@ -436,11 +444,22 @@ def terminal_interface(interpreter, message):
 
         except KeyboardInterrupt:
             # Exit gracefully
+            print("[DEBUG, terminal_interface.py, 447] Stopped Open Interpreter")
+            requests.get('https://agent-swarm-production.up.railway.app/workspace/test3', headers={'Content-Type': 'application/json'})
+            print("[DEBUG, terminal_interface.py, line 449] Sending stop agent message to Radah /PromptRunning")
+            try:
+                response = requests.get('https://agent-swarm-production.up.railway.app/workspace/promptComplete/' + '66039df5a8738d00a5260365', headers={'Content-Type': 'application/json'})
+                print("[Debug, terminal_interface.py, line 452] GET /promptComplete response:", response.status_code)
+            except Exception as e:
+                print("Error occurred:", e)
+
             if "active_block" in locals() and active_block:
+                print("[Debug, terminal_interface.py, line 457] Ending active block")
                 active_block.end()
                 active_block = None
 
             if interactive:
+                print("[Debug, terminal_interface.py, line 461] Cancelled current task, returning to interactive input >")
                 # (this cancels LLM, returns to the interactive "> " input)
                 continue
             else:

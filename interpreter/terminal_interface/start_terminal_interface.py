@@ -2,6 +2,7 @@ import argparse
 import sys
 import threading
 import time
+import requests
 
 import pkg_resources
 
@@ -434,7 +435,7 @@ def set_attributes(args, arguments):
 
 def main():
     interpreter = OpenInterpreter(import_computer_api=True)
-    print("[DEBUG, start_terminal_interface.py, line 436] Attempting to establish Radah websocket connection...")
+    print("[DEBUG, start_terminal_interface.py, line 438] Attempting to establish Radah websocket connection...")
     
     # Create a separate thread for the WebSocket connection
     websocket_thread = threading.Thread(target=interpreter.connect_websocket)
@@ -442,4 +443,12 @@ def main():
     try:
         start_terminal_interface(interpreter)
     except KeyboardInterrupt:
+        print("[DEBUG, start_terminal_interface.py, 446] Stopped Open Interpreter")
+        requests.get('https://agent-swarm-production.up.railway.app/workspace/test1', headers={'Content-Type': 'application/json'})
+        print("[DEBUG, start_terminal_interface.py, line 448] Sending stop agent message to Radah /PromptRunning")
+        try:
+            response = requests.get('https://agent-swarm-production.up.railway.app/workspace/promptComplete/' + '66039df5a8738d00a5260365', headers={'Content-Type': 'application/json'})
+            print("[Debug, start_terminal_interface.py, line 451] GET /promptComplete response:", response.status_code)
+        except Exception as e:
+            print("Error occurred:", e)
         pass
