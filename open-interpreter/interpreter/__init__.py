@@ -1,8 +1,25 @@
+import signal
+import sys
 from .core.computer.terminal.base_language import BaseLanguage
 from .core.core import OpenInterpreter
 
+
+print('we are at init.py')
 interpreter = OpenInterpreter()
 computer = interpreter.computer
+
+def signal_handler(sig, frame):
+    print('WE HAVE RECIEVED A SIGNAL')
+    print(interpreter)
+    print("computer ^^")
+    sys.stdout.flush()
+    interpreter.computer.terminate()
+    
+
+
+#signal.signal(signal.SIGINT, signal_handler)
+
+
 
 #     ____                      ____      __                            __
 #    / __ \____  ___  ____     /  _/___  / /____  _________  ________  / /____  _____

@@ -8,6 +8,7 @@ import requests
 import threading
 import time
 import websocket
+import sys
 from datetime import datetime
 
 from ..terminal_interface.terminal_interface import terminal_interface
@@ -151,7 +152,7 @@ class OpenInterpreter:
 
     def on_websocket_open(self, ws):
         print("[DEBUG, core.py, line 148] Sending initial connection message to Radah websocket server")
-        ws.send(json.dumps({ "type": "config", "promptRunning": False, "agentID": self.agentID, "connectionType": "workspace"}))
+        #ws.send(json.dumps({ "type": "config", "promptRunning": False, "agentID": self.agentID, "connectionType": "workspace"}))
         print("[DEBUG, core.py, line 150] Web socket connection opened")
 
     def on_websocket_message(self, ws, message):
@@ -386,8 +387,8 @@ class OpenInterpreter:
             else:
                 # If they don't match, yield a end message for the last message type and a start message for the new one
                 if last_flag_base:
-                    print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", {**last_flag_base, "end": True})
-                    self.ws.send(json.dumps({**last_flag_base, "end": True}))
+                    #print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", {**last_flag_base, "end": True})
+                    #self.ws.send(json.dumps({**last_flag_base, "end": True}))
                     yield {**last_flag_base, "end": True}
 
                 last_flag_base = {"role": chunk["role"], "type": chunk["type"]}
@@ -396,8 +397,8 @@ class OpenInterpreter:
                 if "format" in chunk and chunk["type"] != "console":
                     last_flag_base["format"] = chunk["format"]
 
-                print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", {**last_flag_base, "start": True})
-                self.ws.send(json.dumps({**last_flag_base, "start": True}))
+                #print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", {**last_flag_base, "start": True})
+                #self.ws.send(json.dumps({**last_flag_base, "start": True}))
                 yield {**last_flag_base, "start": True}
 
                 # Add the chunk as a new message
@@ -405,8 +406,8 @@ class OpenInterpreter:
                     self.messages.append(chunk)
 
             # Yield the chunk itself
-            print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", chunk)
-            self.ws.send(json.dumps(chunk))
+            #print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", chunk)
+            #self.ws.send(json.dumps(chunk))
             yield chunk
 
             # Truncate output if it's console output
@@ -417,8 +418,8 @@ class OpenInterpreter:
 
         # Yield a final end flag
         if last_flag_base:
-            print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", {**last_flag_base, "end": True})
-            self.ws.send(json.dumps({**last_flag_base, "end": True}))
+           #print("[DEBUG, core.py, line 313] Sending chunk to Radah websocket: ", {**last_flag_base, "end": True})
+            #self.ws.send(json.dumps({**last_flag_base, "end": True}))
             print("[DEBUG, core.py, line 313] Sending stop agent message to Radah /PromptRunning")
             try:
                 response = requests.get('https://agent-swarm-production.up.railway.app/workspace/promptComplete/' + self.agentID, headers={'Content-Type': 'application/json'})
@@ -428,6 +429,8 @@ class OpenInterpreter:
             yield {**last_flag_base, "end": True}
 
     def reset(self):
+        print('we are at reset()')
+        # sys.stdout.flush()
         self.computer.terminate()  # Terminates all languages
         self.messages = []
         self.last_messages_count = 0
