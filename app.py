@@ -10,7 +10,7 @@ import signal
 from methods.obs import start_obs_studio, start_obs_stream 
 from methods.launchSubprocess import launchSubprocess
 
-IS_PATRICKS_MAC = True
+IS_PATRICKS_MAC = False
 
 
 
@@ -88,5 +88,5 @@ def test():
     return 'Live'
 
 if __name__ == '__main__':
-    # signal.signal(signal.SIGINT, lambda: print("[DEBUG] Parent process received SIGINT (CTRL-C). Ignoring..."))
+    signal.signal(signal.SIGINT, lambda: print("[DEBUG] Parent process received SIGINT (CTRL-C). Ignoring..."))
     run_simple('0.0.0.0', 8000, app)

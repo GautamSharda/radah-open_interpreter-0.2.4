@@ -13,11 +13,11 @@ def signal_handler(sig, frame):
     print(interpreter)
     print("computer ^^")
     sys.stdout.flush()
-    interpreter.computer.terminate()
+    #interpreter.computer.terminate()
     
 
 
-#signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
 
 
 
