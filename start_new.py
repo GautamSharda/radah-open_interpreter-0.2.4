@@ -10,6 +10,7 @@ import requests
 import io
 from io import BytesIO
 from werkzeug.serving import run_simple
+import sys
 import os
 import subprocess
 import threading
@@ -18,6 +19,7 @@ import obsws_python as obs
 import psutil
 
 DONE = True
+OBS_RESTART_COUNT = 0
 app = Flask(__name__)
 CORS(app)
 
@@ -31,6 +33,7 @@ open_interpreter_process = subprocess.Popen(
     # ["poetry", "run", "interpreter", "--os", "--api_key", "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", "--model", "anthropic/claude-3-haiku-20240307"],
     ["poetry", "run", "interpreter", "--os", "--api_key", "sk-proj-mt9D5KEcHeqSrvV5NGGhT3BlbkFJ6wEkplsIDlew2QqNEgOg", "--model", "openai/gpt-4o"],
     # ["poetry", "run", "interpreter", "--os", "--api_key", "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", "--model", "huggingface/Efficient-Large-Model/Llama-3-VILA1.5-8B"],
+    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
     stdin=subprocess.PIPE,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
@@ -77,7 +80,14 @@ def start_obs_stream():
         cl.start_stream()
         print("OBS streaming started")
     except Exception as e:
-        print(f"Error starting OBS stream: {str(e)}")
+        print(f"Error starting OBS stream: {str(e)}.")
+        time.sleep(5)
+        if OBS_RESTART_COUNT < 3:
+            print("Retrying...")
+            start_obs_stream()
+            OBS_RESTART_COUNT += 1
+        else:
+            print("Retying limit exceeded.")
 
 # Start OBS Studio and then start the stream
 start_obs_studio()
@@ -117,27 +127,27 @@ def doneFunction():
 @app.route('/stop', methods=['GET'])
 def stop():
     #breakpoint()
-    try:
-        try:
-            # Send CTRL+C signal to the subprocess
-            print("[DEBUG] Sending CTRL+C signal to the subprocess...")
-            open_interpreter_process.send_signal(signal.CTRL_C_EVENT)
+    print("[DEBUG] Sending CTRL+C signal to the subprocess...")
+    open_interpreter_process.send_signal(signal.CTRL_C_EVENT)
+            # try:
+            #     try:
+            #         # Send CTRL+C signal to the subprocess
+            #         print("[DEBUG] Sending CTRL+C signal to the subprocess...")
+            #         open_interpreter_process.send_signal(signal.CTRL_C_EVENT)
 
 
             # Wait for the subprocess to finish
-            print("[DEBUG] Waiting for the subprocess to finish...")
-            open_interpreter_process.wait()
-            print(f"Wait")
-        except KeyboardInterrupt:
-            print("[DEBUG] Parent process received KeyboardInterrupt. Ignoring...")
+            # print("[DEBUG] Waiting for the subprocess to finish...")
+            #open_interpreter_process.wait()
+            # print(f"Wait")
+        # except KeyboardInterrupt:
+        #     print("[DEBUG] Parent process received KeyboardInterrupt. Ignoring...")
 
-        print("[DEBUG] Subprocess finished with exit code:", open_interpreter_process.returncode)
-        print("[DEBUG] Parent process continues execution.")
+    # print("[DEBUG] Subprocess finished with exit code:", open_interpreter_process.returncode)
+    print("[DEBUG] Sent signal.")
+    print("[DEBUG] Parent process continues execution.")
 
-        return 'Agent stopped'
-    except Exception as e:
-        print(f"Error sending CTRL+C signal to subprocess: {str(e)}")
-        return 'Error stopping agent'
+    return 'Agent stopped'
 
 @app.route('/test', methods=['GET'])
 def test():
@@ -145,8 +155,9 @@ def test():
     return 'Live'
 
 def signal_handler(sig, frame):
-    print("[DEBUG] Parent process received SIGINT (CTRL-C). Ignoring...")
+    os.write(sys.stdout.fileno(), b"[DEBUG] Parent process received SIGINT (CTRL-C). Ignoring...\n")
+    # print("[DEBUG] Parent process received SIGINT (CTRL-C). Ignoring...")
 
 if __name__ == '__main__':
-    signal.signal(signal.SIGINT, signal_handler)
+    # signal.signal(signal.SIGINT, signal_handler)
     run_simple('0.0.0.0', 8000, app)

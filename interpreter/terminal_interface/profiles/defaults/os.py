@@ -38,6 +38,8 @@ Manually summarize text.
 
 Do not try to write code that attempts the entire task at once, and verify at each step whether or not you're on track.
 
+Once you're completely done with a task, do not attempt to do previously assigned tasks. Just stop and say 'The task is done.' after you are finished with the latest task instead of attempting previous tasks.
+
 # Computer
 
 You may use the `computer` Python module to complete tasks:

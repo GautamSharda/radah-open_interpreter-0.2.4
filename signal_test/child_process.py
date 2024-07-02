@@ -1,4 +1,9 @@
 import time
+import ctypes
+
+kernel32 = ctypes.windll.kernel32
+kernel32.SetConsoleCtrlHandler(None, False)
+
 
 count = 0
 while count < 5:

@@ -250,7 +250,9 @@ def respond(interpreter):
                     "format": "active_line",
                     "content": None,
                 }
-
+            except KeyboardInterrupt:
+                print("[DEBUG, respond.py, 254] code execution interrupted")
+                raise
             except:
                 yield {
                     "role": "computer",

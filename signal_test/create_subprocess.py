@@ -7,7 +7,7 @@ import signal
 print("Starting subprocess...")
 
 # Start the subprocess and redirect its output to the current terminal
-process = subprocess.Popen(["python", "child_process.py"], stdout=sys.stdout, stderr=sys.stderr)
+process = subprocess.Popen(["python", "child_process.py"], stdout=sys.stdout, stderr=sys.stderr, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
 
 print("Subprocess started with PID:", process.pid)
 

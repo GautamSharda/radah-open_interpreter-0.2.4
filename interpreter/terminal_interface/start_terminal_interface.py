@@ -3,6 +3,13 @@ import sys
 import threading
 import time
 import requests
+import os
+import signal
+import ctypes
+
+kernel32 = ctypes.windll.kernel32
+kernel32.SetConsoleCtrlHandler(None, False)
+
 
 import pkg_resources
 
@@ -430,11 +437,14 @@ def set_attributes(args, arguments):
                     if args.verbose:
                         print(
                             f"Setting attribute {attr_dict['attr_name']} on {attr_dict['object'].__class__.__name__.lower()} to '{argument_value}'..."
-                        )
-
+                        )    
 
 def main():
     interpreter = OpenInterpreter(import_computer_api=True)
+    def signal_handler(sig, frame):
+        os.write(sys.stdout.fileno(), b"[DEBUG, start_terminal_interface.py, 437] Child process received SIGINT (CTRL-C). Restarting chat...\n")
+        interpreter.chat()
+    # signal.signal(signal.SIGINT, signal_handler)
     print("[DEBUG, start_terminal_interface.py, line 438] Attempting to establish Radah websocket connection...")
     
     # Create a separate thread for the WebSocket connection
