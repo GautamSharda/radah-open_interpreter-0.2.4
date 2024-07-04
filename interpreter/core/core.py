@@ -266,11 +266,17 @@ class OpenInterpreter:
             ## We support multiple formats for the incoming message:
             # Dict (these are passed directly in)
             if isinstance(message, dict):
+                #Radah - todo - change this to be on command
+                self.messages = []
+
                 if "role" not in message:
                     message["role"] = "user"
                 self.messages.append(message)
             # String (we construct a user message dict)
             elif isinstance(message, str):
+                #Radah - todo - change this to be on command
+                self.messages = []
+
                 self.messages.append(
                     {"role": "user", "type": "message", "content": message}
                 )
