@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 import obsws_python as obs
-
+OBS_RESTART_COUNT = 0
 def kill_obs_processes():
     for proc in psutil.process_iter(['name']):
         if proc.info['name'] == 'obs64.exe':

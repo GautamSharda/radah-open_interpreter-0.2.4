@@ -6,8 +6,7 @@ import subprocess
 import threading
 
 def launchSubprocess():
-    directory = r"D:\\Users\\Demo2\\open_interpreter-0.2.4"
-    os.chdir(directory)
+    directory = r"C:\\Code\\open_interpreter-0.2.4"
 
     startup_info = subprocess.STARTUPINFO()
     startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -34,5 +33,7 @@ def launchSubprocess():
             print(f"Error: {line.strip()}")
 
     threading.Thread(target=read_from_process, daemon=True).start()
-
     return open_interpreter_process
+
+
+#poetry run interpreter --os --api_key sk-proj-mt9D5KEcHeqSrvV5NGGhT3BlbkFJ6wEkplsIDlew2QqNEgOg --model openai/gpt-4

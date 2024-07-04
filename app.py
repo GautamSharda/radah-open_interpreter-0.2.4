@@ -21,7 +21,6 @@ from methods.launchSubprocess import launchSubprocess
 from methods.obs import start_obs_stream, start_obs_studio
 
 DONE = True
-OBS_RESTART_COUNT = 0
 app = Flask(__name__)
 CORS(app)
 
