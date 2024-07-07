@@ -20,6 +20,12 @@ import psutil
 from methods.launchSubprocess import launchSubprocess
 from methods.obs import start_obs_stream, start_obs_studio
 
+print('at app.py')
+time.sleep(5)
+print('first sleep finished')
+time.sleep(200)
+print('second sleep finished')
+
 DONE = True
 app = Flask(__name__)
 CORS(app)
